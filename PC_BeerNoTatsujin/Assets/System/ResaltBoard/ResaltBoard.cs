@@ -16,6 +16,7 @@ public class ResaltBoard : MonoBehaviour
     public TextMeshProUGUI Score;
 
     public Sprite BrackStar;
+    public Sprite HalfStar;
     public Sprite MaxStar;
 
     public List<Image> StarImages = new List<Image>();

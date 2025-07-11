@@ -77,7 +77,7 @@ public class UDPClient : MonoBehaviour
             SendJsonData("磁石分離", 0);
         }
 
-
+        /*
         if (Input.GetMouseButton(1)) // 右クリック検知
         {
             messageCode = 1;
@@ -89,8 +89,21 @@ public class UDPClient : MonoBehaviour
         else 
         {
             messageCode = 0;
+        }*/
+
+        if (Input.GetKey(KeyCode.Alpha2)) // 1検知
+        {
+            messageCode = 1;
         }
-        
+        else if(Input.GetKey(KeyCode.Alpha1)) // 2検知
+        {
+            messageCode = 2;
+        }
+        else
+        {
+            messageCode = 0;
+        }
+
         SendMessage(messageCode.ToString()); // メッセージ送信
         
         /*

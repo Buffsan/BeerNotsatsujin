@@ -6,18 +6,26 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-
+    [SerializeField] GameSystem gameSystem;
     [SerializeField] TextMeshProUGUI ScoreText;
+    [SerializeField] TextMeshProUGUI StartFlagText;
     [SerializeField] GameObject CoinText;
     [SerializeField] GameObject CoinTextPoint;
     [SerializeField] GameObject Canvas;
 
-    
+    [SerializeField] string StandbyOK;
+    [SerializeField] string StandbyOFF;
 
     public float AllScore =0;
 
     public List<float> Scores = new List<float>();
     public List<ScoreRanking> scoreRankings = new List<ScoreRanking>();
+
+   
+    
+    
+    public float NowScore = 0;
+
 
     // Start is called before the first frame update
     void Start()
@@ -28,8 +36,39 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ScoreText.text = AllScore.ToString();  
+        ScoreText.text = AllScore.ToString();
+        if (gameSystem.BeerStanbyOK)
+        {
+            StartFlagText.text = StandbyOK.ToString();
+        }
+        else 
+        {
+            StartFlagText.text = StandbyOFF.ToString();
+        }
+
+        //Debug.Log(AdjustScore(NowScore ,0,10,7));
+
     }
+
+    public float AdjustScore(float inputValue ,float minScore,float maxScore,float baseValue)
+    {
+        if (inputValue <= minScore || inputValue >= maxScore)
+        {
+            return 0f; // 範囲外ならスコアは0
+        }
+
+        // 距離を計算
+        float distance = Mathf.Abs(inputValue - baseValue);
+
+        // 二次的にスコアを減らす (例えば y = 1 - (distance^2 / maxDistance^2))
+        float maxDistance = Mathf.Abs(maxScore - baseValue);
+        float normalizedScore = Mathf.Clamp01(1 - Mathf.Pow(distance / maxDistance, 2));
+
+        // スコアを線形補間
+        return Mathf.Lerp(minScore, maxScore, normalizedScore);
+
+    }
+
 
     public void FinishGameScore() 
     {

@@ -71,6 +71,7 @@ public class Eight_Controller : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetKeyDown(KeyCode.U)) 
         {
             PontGet(100);
@@ -100,7 +101,7 @@ public class Eight_Controller : MonoBehaviour
         {
             PontGet(0);
             //scoreManager.AllScore += 25;
-        }
+        }*/
     }
 
     // Update is called once per frame
@@ -162,11 +163,15 @@ public class Eight_Controller : MonoBehaviour
 
         for (int i = 0; i < resaltBoard.StarImages.Count; i++) 
         {
-
-            if (Getpoint > 20 * (i+1)) 
+            resaltBoard.StarImages[i].sprite = resaltBoard.BrackStar;
+            if (Getpoint > 20 * (i + 1))
             {
                 resaltBoard.StarImages[i].sprite = resaltBoard.MaxStar;
-                Debug.Log("HOSI"+i);
+                Debug.Log("HOSI" + i);
+            }
+            else if(Getpoint > 20 * (i) +10)
+            {
+                resaltBoard.StarImages[i].sprite = resaltBoard.HalfStar;
             }
         
         }

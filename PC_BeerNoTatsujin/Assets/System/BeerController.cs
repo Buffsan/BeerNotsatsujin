@@ -12,6 +12,7 @@ public class BeerController : MonoBehaviour
     public float SaveBeerV = 0;
     public float SaveBubbleV = 0;
 
+    [SerializeField] SAVE_Gamedata savedata;
     [SerializeField] GameObject BeerGlass;
     [SerializeField] GameObject SpawnPoint;
     [SerializeField] GameObject SpawnPoint2;
@@ -133,10 +134,10 @@ public class BeerController : MonoBehaviour
 
         if (gamesystem.gameStyle == GameSystem.GameStyle.DefaltGameMode)
         {
-
+            /*
             const float BubbleValuePoint = 0.3f;
             const float BeerValuePoints = 0.7f;
-            const float AllBeersValue = 65;
+            const float AllBeersValue = 80;
 
             float foamRatio_val;
             float liquidRatio_val;
@@ -154,15 +155,22 @@ public class BeerController : MonoBehaviour
             foamRatio_val = Mathf.Clamp(foamRatio, minFoamRatio, maxFoamRatio);
 
 
-            float Beer;
-            float Bubble;
+           
 
             Bubble = Mathf.Max(0, (BubbleValuePoint - Mathf.Abs(foamRatio_val - BubbleValuePoint)) * AllBeersValue);
             Beer = Mathf.Max(0, (BeerValuePoints - Mathf.Abs(liquidRatio_val - BeerValuePoints)) * AllBeersValue);
+            */ 
+            
+            float Beer;
+            float Bubble;
 
+            Beer = scoreManager.AdjustScore((float)liquidRatio, 0,1,0.7f)*40;
+            Bubble = scoreManager.AdjustScore((float)foamRatio, 0, 1, 0.3f)*40;
             float Beersscore = (int)Bubble + (int)Beer;
+            Debug.Log("Beern:" + liquidRatio + " Bubblen" + foamRatio);
+            Debug.Log("Beer:"+Beer+ " Bubble"+ Bubble);
 
-            const float AllRuleValue = 25;
+            const float AllRuleValue = 10;
             float lostTimeScore = Mathf.Max(0, AllRuleValue - (udp.OverTime /1.5f));
 
             float Bounus=0;
@@ -178,8 +186,9 @@ public class BeerController : MonoBehaviour
                     }
                 }
             }
-
+            
             score = (int)Beersscore + (int)lostTimeScore + (int)Bounus;
+            savedata.SaveData(score);
 
         }
         else
