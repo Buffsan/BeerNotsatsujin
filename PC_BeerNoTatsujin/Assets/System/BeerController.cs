@@ -255,7 +255,7 @@ public class BeerController : MonoBehaviour
             eightChan.PontGet(score);
         }
 
-        scoreManager.AllScore += 30000 * score;
+        scoreManager.AllScore += score;
 
 
         

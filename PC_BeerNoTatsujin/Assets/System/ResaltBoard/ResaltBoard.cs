@@ -14,6 +14,8 @@ public class ResaltBoard : MonoBehaviour
     public TextMeshProUGUI AllBeers;
     public TextMeshProUGUI LostBeers;
     public TextMeshProUGUI Score;
+    public GameObject Monku;
+    public GameObject Monku1;
 
     public Sprite BrackStar;
     public Sprite HalfStar;

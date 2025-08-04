@@ -92,6 +92,10 @@ public class GameSystem : MonoBehaviour
             BeerStanbyOK = true;
         }
 
+        if (Input.GetKey(KeyCode.F)) 
+        {
+            
+        }
         if (Input.GetKeyDown(KeyCode.F)) 
         {
             if (gameMode == GameMode.Game)
@@ -117,8 +121,11 @@ public class GameSystem : MonoBehaviour
         { 
         F_push.Dequeue();
         }
+        if (f_Count == 0 && F_push.Count > 15) 
+        {
+            BeerStanbyOK = true;
+        }
 
-        
 
         if (Input.GetKeyDown(KeyCode.R)) 
         { 
@@ -221,7 +228,7 @@ public class GameSystem : MonoBehaviour
             }
             if (ResaltPhase == 1) 
             {
-                if (ResaltCount > 2) 
+                if (ResaltCount > 1f) 
                 {
                     StartCoroutine(GraduallyShrinkDownSize(4, 4));
                     eightController.animator.Play("結果２", 0, 0);
@@ -231,7 +238,7 @@ public class GameSystem : MonoBehaviour
             }
             if (ResaltPhase == 2)
             {
-                if (ResaltCount > 2)
+                if (ResaltCount > 1f)
                 {
                     StartCoroutine(GraduallyShrinkDownSize(3, 4));
                     eightController.animator.Play("結果３", 0, 0);
@@ -241,7 +248,7 @@ public class GameSystem : MonoBehaviour
             }
             if (ResaltPhase == 3)
             {
-                if (ResaltCount > 2)
+                if (ResaltCount > 1.5f)
                 {
                     StartCoroutine(GraduallyShrinkUpSize(5, 8));
                     eightController.PontGet(eightController.SaveScore);
@@ -267,7 +274,8 @@ public class GameSystem : MonoBehaviour
 
                     scoreManager.FinishGameScore();
                     Amanager.isPlaySE(audios[2]);
-                    animText.TEXT.text = "業務終了";
+                    animText.TEXT.fontSize = 390;
+                    animText.TEXT.text = "ビール注ぎ\n終了！";
                     gameMode = GameMode.AfterGame;
                 }
             }
@@ -304,7 +312,8 @@ public class GameSystem : MonoBehaviour
             else 
             {
                 Amanager.isPlaySE(audios[3]);
-                animText.TEXT.text = "業務開始";
+                animText.TEXT.fontSize = 390;
+                animText.TEXT.text = "ビール注ぎ\n開始！";
             }
 
             Destroy(CL_Text, 2) ;
@@ -325,7 +334,7 @@ public class GameSystem : MonoBehaviour
 
             if (beerController.CL_Beers.Count != 0) 
             {
-                resaltBoard.LostBeers.text = udp_Client.OverTime.ToString("F1");
+                resaltBoard.LostBeers.text = udp_Client.OverTime.ToString("F1") + "秒";
                 resaltBoard.BeerNumber.text = udp_Client.BeerNumberAdd.ToString();
                 resaltBoard.BubbleNumber.text = udp_Client.BubbleNumberAdd.ToString();
                 resaltBoard.BeerPercentNumber.text = beerController.SaveBeerV.ToString("F1") + "%";

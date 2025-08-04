@@ -71,6 +71,7 @@ public class Eight_Controller : MonoBehaviour
 
     private void Update()
     {
+        
         /*
         if (Input.GetKeyDown(KeyCode.U)) 
         {
@@ -186,7 +187,17 @@ public class Eight_Controller : MonoBehaviour
         GameObject CL_Cool = Instantiate(CoolObject, new Vector2(Random.Range(-5f,0f), Random.Range(-2f,2f)), Quaternion.identity);
         CoolController cool = CL_Cool.GetComponent<CoolController>();
 
-        if (Getpoint >= 100)
+        if (Getpoint >= 103)
+        {
+            cool.sprite.sprite = Cool[0]; cool.animator.Play("パーフェクト評価"); audiomanager.isPlaySE(Coolaudio[6]);
+            animator.Play("表情変化エクセレント", 0, 0);
+            CoolAnimator.Play("エクセレント", 0, 0);
+            CoolEffectSpawn(ExcellentEffectObj);
+            CL_Cool.transform.position = new Vector2(-2.5f, 3);
+
+            ExcellentCount++;
+        }
+        else if(Getpoint < 103 && Getpoint >= 100)
         {
             cool.sprite.sprite = Cool[0]; cool.animator.Play("エクセレント評価"); audiomanager.isPlaySE(Coolaudio[0]);
             animator.Play("表情変化エクセレント", 0, 0);
