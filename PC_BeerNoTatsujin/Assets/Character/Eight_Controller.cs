@@ -33,6 +33,8 @@ public class Eight_Controller : MonoBehaviour
     public int BadCount = 0;
     public int TerribleCount = 0;
 
+    public List<string>RevieTexts = new List<string>();
+
     public bool StartGameNow = false;
     float StartGameCount = 0;
 
@@ -72,12 +74,13 @@ public class Eight_Controller : MonoBehaviour
     private void Update()
     {
         
-        /*
+        
         if (Input.GetKeyDown(KeyCode.U)) 
         {
-            PontGet(100);
+            PontGet(103);
             //scoreManager.AllScore += 100;
         }
+        /*
         if (Input.GetKeyDown(KeyCode.I))
         {
             PontGet(80);
@@ -165,12 +168,12 @@ public class Eight_Controller : MonoBehaviour
         for (int i = 0; i < resaltBoard.StarImages.Count; i++) 
         {
             resaltBoard.StarImages[i].sprite = resaltBoard.BrackStar;
-            if (Getpoint > 20 * (i + 1))
+            if (Getpoint >= 20 * (i + 1))
             {
                 resaltBoard.StarImages[i].sprite = resaltBoard.MaxStar;
                 Debug.Log("HOSI" + i);
             }
-            else if(Getpoint > 20 * (i) +10)
+            else if(Getpoint >= 20 * (i) +10)
             {
                 resaltBoard.StarImages[i].sprite = resaltBoard.HalfStar;
             }
@@ -206,7 +209,7 @@ public class Eight_Controller : MonoBehaviour
             CL_Cool.transform.position = new Vector2(-2.5f,3);
 
             ExcellentCount++;
-        } else if(Getpoint < 100 && Getpoint >=85)
+        } else if(Getpoint < 100 && Getpoint >=90)
             {
              cool.sprite.sprite = Cool[1]; cool.animator.Play("グレート評価"); audiomanager.isPlaySE(Coolaudio[1]);
             animator.Play("表情変化グレート", 0, 0);
@@ -214,7 +217,7 @@ public class Eight_Controller : MonoBehaviour
             GreatCount++;
             CoolEffectSpawn(GreatEffectObj);
         }
-        else if (Getpoint < 85 && Getpoint >= 70)
+        else if (Getpoint < 90 && Getpoint >= 85)
         {
               cool.sprite.sprite = Cool[2];cool.animator.Play("ナイス評価"); audiomanager.isPlaySE(Coolaudio[2]);
             animator.Play("表情変化ナイス", 0, 0);
@@ -222,13 +225,13 @@ public class Eight_Controller : MonoBehaviour
             CoolAnimator.Play("ナイス", 0, 0);
             CoolEffectSpawn(NiceEffectObj);
         }
-        else if (Getpoint < 70 && Getpoint >= 60)
+        else if (Getpoint < 85 && Getpoint >= 75)
         {
 
              cool.animator.Play("ソーソー評価"); audiomanager.isPlaySE(Coolaudio[4]);
             animator.Play("表情変化ソーソー", 0, 0);
         }
-        else if (Getpoint < 60 && Getpoint > 50)
+        else if (Getpoint < 75 && Getpoint > 50)
         {
             cool.sprite.sprite = Cool[3];cool.animator.Play("バット評価"); audiomanager.isPlaySE(Coolaudio[3]);
             animator.Play("表情変化バット", 0, 0);

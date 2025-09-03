@@ -18,6 +18,9 @@ public class BeerController : MonoBehaviour
     [SerializeField] GameObject SpawnPoint2;
     [SerializeField] Eight_Controller eightChan;
     [SerializeField] GameSystem gamesystem;
+    [SerializeField] ResaltBoard resaltBoard;
+
+    public List<string> RevieTexts = new List<string>();
 
     [SerializeField] ScoreManager scoreManager;
 
@@ -164,23 +167,37 @@ public class BeerController : MonoBehaviour
             float Beer;
             float Bubble;
 
-            Beer = scoreManager.AdjustScore((float)liquidRatio, 0,1,0.7f)*40;
-            Bubble = scoreManager.AdjustScore((float)foamRatio, 0, 1, 0.3f)*40;
+            Beer = scoreManager.AdjustScore((float)liquidRatio, 0,1,0.7f)*50;
+            Bubble = scoreManager.AdjustScore((float)foamRatio, 0, 1, 0.3f)*50;
             float Beersscore = (int)Bubble + (int)Beer;
             Debug.Log("Beern:" + liquidRatio + " Bubblen" + foamRatio);
             Debug.Log("Beer:"+Beer+ " Bubble"+ Bubble);
 
-            const float AllRuleValue = 10;
-            float lostTimeScore = Mathf.Max(0, AllRuleValue - (udp.OverTime /1.5f));
+            const float AllRuleValue = 2;
+
+            float lostTimeScore = AllRuleValue;
+            if (udp.OverTime > 2)
+            {
+                 lostTimeScore = Mathf.Max(0, AllRuleValue - (udp.OverTime / 1.5f));
+            }
+            else 
+            {
+                //lostTimeScore = AllRuleValue;
+            }
 
             float Bounus=0;
 
+            string finish_bonusText = resaltBoard.BonusTexts[2];
             if (totalRatio > 0.9f)
             {
                 foreach (var BeerType in eightChan.Bounus_beerpoint)
                 {
                     if (udp.BeerNumberAdd == BeerType.PutIutBeerV && udp.BubbleNumberAdd == BeerType.PutInBubbleV)
                     {
+                        if (BeerType.BounusString == "ÇPìxíçÇ¨") 
+                        {finish_bonusText = resaltBoard.BonusTexts[0]; }
+                        if (BeerType.BounusString == "í èÌíçÇ¨")
+                        { finish_bonusText = resaltBoard.BonusTexts[1]; }
                         Debug.Log(BeerType.BounusString);
                         Bounus = BeerType.BounusPoint;
                     }
@@ -190,6 +207,39 @@ public class BeerController : MonoBehaviour
             score = (int)Beersscore + (int)lostTimeScore + (int)Bounus;
             savedata.SaveData(score);
 
+            //ëçï]èàóù
+            string finish_ReviwText = RevieTexts[7];
+            if (liquidRatio < 0.65) 
+            {
+                finish_ReviwText = RevieTexts[0];
+            }
+            if (foamRatio < 0.25) 
+            {
+                finish_ReviwText = RevieTexts[1];
+            }
+            if ((foamRatio + liquidRatio) < 0.9)
+            {
+                finish_ReviwText = RevieTexts[2];
+            }
+            if ((foamRatio + liquidRatio) < 0.1) 
+            {
+                finish_ReviwText = RevieTexts[3];
+            }
+            if (foamRatio > 0.9) 
+            {
+                finish_ReviwText = RevieTexts[4];
+            }
+            if (udp.OverTime > 2) 
+            {
+                finish_ReviwText = RevieTexts[6];
+            }
+            if (score >= 103) 
+            {
+                finish_ReviwText = RevieTexts[5];
+            }
+            resaltBoard.BonusText.text = finish_bonusText;
+            resaltBoard.ReviewTEXT.text = finish_ReviwText;
+            //Debug.Log(finish_ReviwText);
         }
         else
         {

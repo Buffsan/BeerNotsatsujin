@@ -14,6 +14,8 @@ public class ResaltBoard : MonoBehaviour
     public TextMeshProUGUI AllBeers;
     public TextMeshProUGUI LostBeers;
     public TextMeshProUGUI Score;
+    public TextMeshProUGUI ReviewTEXT;
+    public TextMeshProUGUI BonusText;
     public GameObject Monku;
     public GameObject Monku1;
 
@@ -22,6 +24,7 @@ public class ResaltBoard : MonoBehaviour
     public Sprite MaxStar;
 
     public List<Image> StarImages = new List<Image>();
+    public List<string> BonusTexts = new List<string>();
 
     // Start is called before the first frame update
     void Start()
