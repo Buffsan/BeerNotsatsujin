@@ -13120,6 +13120,7 @@ MonoBehaviour:
   SosoCount: 0
   BadCount: 0
   TerribleCount: 0
+  HosiPOINT: 0
   RevieTexts:
   - "\u30D3\u30FC\u30EB\u304C\u5C11\u306A\u3044\uFF01"
   - "\u6CE1\u304C\u5C11\u306A\u3044\uFF01"
@@ -16989,10 +16990,10 @@ MonoBehaviour:
   - IPName: "30F\uFF08\u81EA\u5B85\u56DE\u7DDA\uFF09"
     IP: 192.168.3.7
   - IPName: "GDU\uFF08\u30BC\u30DF\u56DE\u7DDA\uFF09"
-    IP: 192.168.100.50
+    IP: 192.168.100.56
   - IPName: "GDU\uFF08\u30BC\u30DF\u56DE\u7DDA\uFF09"
     IP: 192.168.248.101
-  ChoiceIP: 0
+  ChoiceIP: 2
   BubbleV: 0
   BeerV: 0
   BeerNumberAdd: 0

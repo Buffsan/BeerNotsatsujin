@@ -33,6 +33,8 @@ public class Eight_Controller : MonoBehaviour
     public int BadCount = 0;
     public int TerribleCount = 0;
 
+    public int HosiPOINT = 0;
+
     public List<string>RevieTexts = new List<string>();
 
     public bool StartGameNow = false;
@@ -164,24 +166,25 @@ public class Eight_Controller : MonoBehaviour
         mode = Mode.Move;
 
         Debug.Log(Getpoint);
-
-        for (int i = 0; i < resaltBoard.StarImages.Count; i++) 
-        {
-            resaltBoard.StarImages[i].sprite = resaltBoard.BrackStar;
-            if (Getpoint >= 20 * (i + 1))
-            {
-                resaltBoard.StarImages[i].sprite = resaltBoard.MaxStar;
-                Debug.Log("HOSI" + i);
-            }
-            else if(Getpoint >= 20 * (i) +10)
-            {
-                resaltBoard.StarImages[i].sprite = resaltBoard.HalfStar;
-            }
         
-        }
+            /*
+            for (int i = 0; i < resaltBoard.StarImages.Count; i++) 
+            {
+                resaltBoard.StarImages[i].sprite = resaltBoard.BrackStar;
+                if (Getpoint >= 20 * (i + 1))
+                {
+                    resaltBoard.StarImages[i].sprite = resaltBoard.MaxStar;
+                    Debug.Log("HOSI" + i);
+                }
+                else if(Getpoint >= 20 * (i) +10)
+                {
+                    resaltBoard.StarImages[i].sprite = resaltBoard.HalfStar;
+                }
 
-        //animator.Play("表情変化",0,0);
-        animator.SetInteger("Anim",1);
+            }*/
+
+            //animator.Play("表情変化",0,0);
+            animator.SetInteger("Anim",1);
         if (Getpoint != 0) 
         {
             AllScoreAnimator.Play("全点数加算",0,0);
@@ -197,11 +200,12 @@ public class Eight_Controller : MonoBehaviour
             CoolAnimator.Play("エクセレント", 0, 0);
             CoolEffectSpawn(ExcellentEffectObj);
             CL_Cool.transform.position = new Vector2(-2.5f, 3);
-
+            HosiPOINT = 10;
             ExcellentCount++;
         }
         else if(Getpoint < 103 && Getpoint >= 100)
         {
+            HosiPOINT = 9;
             cool.sprite.sprite = Cool[0]; cool.animator.Play("エクセレント評価"); audiomanager.isPlaySE(Coolaudio[0]);
             animator.Play("表情変化エクセレント", 0, 0);
             CoolAnimator.Play("エクセレント",0,0);
@@ -211,7 +215,9 @@ public class Eight_Controller : MonoBehaviour
             ExcellentCount++;
         } else if(Getpoint < 100 && Getpoint >=90)
             {
-             cool.sprite.sprite = Cool[1]; cool.animator.Play("グレート評価"); audiomanager.isPlaySE(Coolaudio[1]);
+
+            HosiPOINT = 8;
+            cool.sprite.sprite = Cool[1]; cool.animator.Play("グレート評価"); audiomanager.isPlaySE(Coolaudio[1]);
             animator.Play("表情変化グレート", 0, 0);
             CoolAnimator.Play("グレート", 0, 0);
             GreatCount++;
@@ -219,7 +225,8 @@ public class Eight_Controller : MonoBehaviour
         }
         else if (Getpoint < 90 && Getpoint >= 85)
         {
-              cool.sprite.sprite = Cool[2];cool.animator.Play("ナイス評価"); audiomanager.isPlaySE(Coolaudio[2]);
+            HosiPOINT = 6;
+            cool.sprite.sprite = Cool[2];cool.animator.Play("ナイス評価"); audiomanager.isPlaySE(Coolaudio[2]);
             animator.Play("表情変化ナイス", 0, 0);
             NiceCount++;
             CoolAnimator.Play("ナイス", 0, 0);
@@ -227,8 +234,8 @@ public class Eight_Controller : MonoBehaviour
         }
         else if (Getpoint < 85 && Getpoint >= 75)
         {
-
-             cool.animator.Play("ソーソー評価"); audiomanager.isPlaySE(Coolaudio[4]);
+            HosiPOINT = 4;
+            cool.animator.Play("ソーソー評価"); audiomanager.isPlaySE(Coolaudio[4]);
             animator.Play("表情変化ソーソー", 0, 0);
         }
         else if (Getpoint < 75 && Getpoint > 50)
@@ -240,10 +247,24 @@ public class Eight_Controller : MonoBehaviour
         }
         else if (Getpoint <= 50)
         {
+            HosiPOINT = 2;
             cool.sprite.sprite = Cool[3]; cool.animator.Play("テリブル評価"); audiomanager.isPlaySE(Coolaudio[5]);
             animator.Play("表情変化テリブル", 0, 0);
             CoolAnimator.Play("テリブル", 0, 0);
 
+        }
+        for (int i = 0; i < resaltBoard.StarImages.Count; i++)
+        {
+            resaltBoard.StarImages[i].sprite = resaltBoard.BrackStar;
+            if (HosiPOINT >= 2 * (i + 1))
+            {
+                resaltBoard.StarImages[i].sprite = resaltBoard.MaxStar;
+                Debug.Log("HOSI" + i);
+            }
+            else if(HosiPOINT >= (2 * i)+ 1)
+            {
+                resaltBoard.StarImages[i].sprite = resaltBoard.HalfStar;
+            }
         }
 
     }
