@@ -16,15 +16,29 @@ public class ResaltBoard : MonoBehaviour
     public TextMeshProUGUI Score;
     public TextMeshProUGUI ReviewTEXT;
     public TextMeshProUGUI BonusText;
+    public TextMeshProUGUI BrackFinishCountTEXT;
     public GameObject Monku;
     public GameObject Monku1;
+    public GameObject BrackFinishCount;
+    public GameObject BrackDaiza;
 
     public Sprite BrackStar;
     public Sprite HalfStar;
     public Sprite MaxStar;
 
+    public Image CoolTEXT_Image;
+
+    public List<Sprite> CoolImages = new List<Sprite>();
     public List<Image> StarImages = new List<Image>();
     public List<string> BonusTexts = new List<string>();
+
+    public void allDisperBracks() 
+    { 
+    
+        BrackDaiza.SetActive(false);
+        BrackFinishCount.SetActive(false);
+
+    }
 
     // Start is called before the first frame update
     void Start()

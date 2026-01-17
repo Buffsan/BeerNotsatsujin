@@ -11,6 +11,8 @@ public class GameSystem : MonoBehaviour
     public float GameCout=0;
     public float GameTimer = 100;
 
+    private Coroutine currentZoomCoroutine;
+
     public List<BeerEvaluation> beerEvaluations = new List<BeerEvaluation>();
 
     
@@ -28,6 +30,7 @@ public class GameSystem : MonoBehaviour
     [SerializeField] GameObject Nokori15;
     [SerializeField] Animator CountTextanimator;
     [SerializeField] ScoreManager scoreManager;
+    [SerializeField] SAVE_Gamedata gamedata;
     bool N15 = false;
 
     int LastCount = 15;
@@ -35,6 +38,8 @@ public class GameSystem : MonoBehaviour
     public int StartLastCunt = 4;
     public int ResaltPhase = 0;
     float ResaltCount = 0;
+
+    public int ScoreNow=0;
 
     public bool BeerStanbyOK = false;
 
@@ -46,6 +51,18 @@ public class GameSystem : MonoBehaviour
     [SerializeField] BeerController beerController;
     [SerializeField] UDPClient udp_Client;
     [SerializeField] ResaltBoard resaltBoard;
+
+    public static GameSystem Instans;
+
+    public  List<TextMeshProUGUI> AllCoolScoreTexts = new List<TextMeshProUGUI>();
+    public List<float> AllCoolNumbers = new List<float>();
+    public void AddCoolText(int ID) 
+    {
+        if (AllCoolNumbers.Count < ID) return;
+        AllCoolNumbers[ID]++;
+        AllCoolScoreTexts[ID].text = AllCoolNumbers[ID].ToString();
+    }
+
 
     [SerializeField] GameObject SabMassage;
     [SerializeField] List<GameObject> MassageList;
@@ -77,12 +94,19 @@ public class GameSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Instans = this;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began || Input.GetMouseButtonDown(0)) 
+        {
+            if (ResaltPhase == 5) 
+            {
+                ResaltCount = 0;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.DownArrow)) 
         {
             BeerStanbyOK = false;
@@ -91,14 +115,18 @@ public class GameSystem : MonoBehaviour
         {
             BeerStanbyOK = true;
         }
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // ゲーム終了
+            QuitGame();
+        }
         if (Input.GetKey(KeyCode.F)) 
         {
             
         }
         if (Input.GetKeyDown(KeyCode.F)) 
         {
-            if (gameMode == GameMode.Game)
+            if (gameMode == GameMode.Game && StartCount > 1)
             {
                 udp_Client.SendJsonData("ビールよこせ", 0);
             }
@@ -133,13 +161,13 @@ public class GameSystem : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space)) 
         {
-            GameStart();
-            udp_Client.SendJsonData("ゲーム開始",20);
+            //GameStart();
+            //udp_Client.SendJsonData("ゲーム開始",20);
         }
     }
     public void GameStart() 
     {
-        StartCoroutine(GraduallyShrinkDownSize(5, 0.5f));
+        StartZoomCoroutine(GraduallyShrinkDownSize(5f, 0.5f));
 
 
         currentDateTime = DateTime.Now;
@@ -153,18 +181,32 @@ public class GameSystem : MonoBehaviour
         eightController.StartGameNow = true;
     
     }
-    public void ResetGame()
+    void SetAllQueueTrue(Queue<bool> queue)
     {
+        int count = queue.Count;
 
+        for (int i = 0; i < count; i++)
+        {
+            queue.Dequeue();      // 古い値を捨てる
+            queue.Enqueue(true);  // true を入れる
+        }
+    }
+    public void ResetGame()//ゲームの初期化
+    {
+        resaltBoard.allDisperBracks();
         currentDateTime = DateTime.Now;
+
+        gamedata.SaveData(ScoreNow,"");
+
         FinishcurrentTimeString = currentDateTime.ToString("HH:mm:ss");
 
         ResaltPhase =0;
         ResaltCount=0;
         eightController.transform.position = new Vector2(-5.5f,1.71f);
-        StartCoroutine(GraduallyShrinkUpSize(6, 0.5f));
+        eightController.StopAllCoroutines();
+        StartZoomCoroutine(GraduallyShrinkUpSize(6f, 0.5f));
 
-        
+
         udp_Client.SendJsonData("ビール消せ", 0);
 
         udp_Client.SendJsonData("終了",0);
@@ -179,7 +221,46 @@ public class GameSystem : MonoBehaviour
         scoreManager.AllScore = 0;
         gameMode = GameMode.Stay;
         GameCout = 0;
-        GameTimer = 100;
+        //GameTimer = 100;
+        N50 = false;
+        N15 = false;
+        LastCount = 15;
+        StartCount = 0;
+        StartLastCunt = 4;
+
+        GameCountText.text = "100";
+    }
+
+    public void ResetGame_Another()
+    {
+
+        currentDateTime = DateTime.Now;
+
+        gamedata.SaveData(ScoreNow, "AllDATA");
+        eightController.StopAllCoroutines();
+        FinishcurrentTimeString = currentDateTime.ToString("HH:mm:ss");
+
+        ResaltPhase = 0;
+        ResaltCount = 0;
+        eightController.transform.position = new Vector2(-5.5f, 1.71f);
+        StartZoomCoroutine(GraduallyShrinkUpSize(6f, 0.5f));
+
+
+        udp_Client.SendJsonData("ビール消せ", 0);
+
+        udp_Client.SendJsonData("終了", 0);
+        beerController.AllDellBeers();
+        if (ResaltB.GetCurrentAnimatorStateInfo(0).IsName("現れるリザルトボード"))
+        {
+            ResaltB.Play("消えるリザルトボード", 0, 0);
+        }
+        Kanban.Play("出てくるカンバン", 0, 0);
+
+        eightController.animator.Play("開始前待機", 0, 0);
+        scoreManager.AllScore = 0;
+        gameMode = GameMode.Stay;
+        GameCout = 0;
+        //GameTimer = 100;
         N50 = false;
         N15 = false;
         LastCount = 15;
@@ -230,7 +311,7 @@ public class GameSystem : MonoBehaviour
             {
                 if (ResaltCount > 1f) 
                 {
-                    StartCoroutine(GraduallyShrinkDownSize(4, 4));
+                    StartZoomCoroutine(GraduallyShrinkDownSize(4f, 4f));
                     eightController.animator.Play("結果２", 0, 0);
                     ResaltPhase++;
                     ResaltCount = 0;
@@ -240,7 +321,7 @@ public class GameSystem : MonoBehaviour
             {
                 if (ResaltCount > 1f)
                 {
-                    StartCoroutine(GraduallyShrinkDownSize(3, 4));
+                    StartZoomCoroutine(GraduallyShrinkDownSize(3f, 4f));
                     eightController.animator.Play("結果３", 0, 0);
                     ResaltPhase++;
                     ResaltCount = 0;
@@ -250,7 +331,7 @@ public class GameSystem : MonoBehaviour
             {
                 if (ResaltCount > 1.5f)
                 {
-                    StartCoroutine(GraduallyShrinkUpSize(5, 8));
+                    StartZoomCoroutine(GraduallyShrinkUpSize(5f, 8f));
                     eightController.PontGet(eightController.SaveScore);
                     ResaltPhase++;
                     ResaltCount = 0;
@@ -278,6 +359,39 @@ public class GameSystem : MonoBehaviour
                     animText.TEXT.text = "ビール注ぎ\n終了！";
                     gameMode = GameMode.AfterGame;
                 }
+            }
+            if (ResaltPhase == 5) 
+            {
+                if (F_pop)
+                {
+                    if (ResaltCount > 20)
+                    {
+                        resaltBoard.BrackFinishCount.SetActive(true);
+                        resaltBoard.BrackDaiza.SetActive(false);
+                        resaltBoard.BrackFinishCountTEXT.text = (30 - ResaltCount).ToString("F0"); 
+                    }
+                    else 
+                    {
+                        resaltBoard.BrackFinishCount.SetActive(false);
+                        resaltBoard.BrackDaiza.SetActive(false);
+                    }
+                    if (ResaltCount > 30) 
+                    {
+                        SetAllQueueTrue(F_push);
+                        ResetGame();
+                    }
+                }
+                else 
+                {
+                    if (ResaltCount > 15)
+                    {
+                        ResaltCount = 200;
+                        resaltBoard.BrackFinishCount.SetActive(false);
+                        resaltBoard.BrackDaiza.SetActive(true);
+                        
+                    }
+                }
+                
             }
         }
     }
@@ -394,7 +508,7 @@ public class GameSystem : MonoBehaviour
         {
             GameCout = GameTimer;
 
-            ResaltB.Play("現れるリザルトボード", 0, 0);
+            //ResaltB.Play("現れるリザルトボード", 0, 0);
             GameObject CL_Text = Instantiate(CountTextPrefab);
             RectTransform rect = CL_Text.GetComponent<RectTransform>();
             CL_Text.transform.parent = Cunvas.transform;
@@ -408,6 +522,31 @@ public class GameSystem : MonoBehaviour
             gameMode = GameMode.AfterGame;
         }
         GameCountText.text = (GameTimer - GameCout).ToString("F2");
+    }
+
+    void QuitGame()
+    {
+        Debug.Log("ゲームを終了します");
+
+        // エディタ上での実行停止（Unityエディタ用）
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // ビルド後の実行ファイルを終了
+        Application.Quit();
+#endif
+    }
+
+public void StartZoomCoroutine(IEnumerator coroutine)
+    {
+        // 前のコルーチンが動いていたら停止
+        if (currentZoomCoroutine != null)
+        {
+            StopCoroutine(currentZoomCoroutine);
+        }
+
+        // 新しいコルーチンを開始
+        currentZoomCoroutine = StartCoroutine(coroutine);
     }
     private IEnumerator GraduallyShrinkDownSize(float value,float Speed)
     {

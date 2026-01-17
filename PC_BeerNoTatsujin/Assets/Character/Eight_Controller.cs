@@ -8,8 +8,8 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class Eight_Controller : MonoBehaviour
 {
-
-    [SerializeField]Sprite Nomal;
+    Coroutine coroutine;
+    [SerializeField] Sprite Nomal;
     [SerializeField] Sprite Fine1;
     [SerializeField] Sprite Fine2;
     [SerializeField] Sprite Bad1;
@@ -25,7 +25,7 @@ public class Eight_Controller : MonoBehaviour
     [SerializeField] GameObject ExcellentEffectObj;
     [SerializeField] GameObject GreatEffectObj;
     [SerializeField] GameObject NiceEffectObj;
-
+    GameSystem gameSystem => GameSystem.Instans;
     public int ExcellentCount = 0;
     public int GreatCount = 0;
     public int NiceCount = 0;
@@ -137,7 +137,7 @@ public class Eight_Controller : MonoBehaviour
             {
                 StartGameCount = 0;
                 StartGameNow = false;
-                StartCoroutine(EightRightMove(new Vector2( 1,0), 3));
+                StartMoveCoroutine(EightRightMove(new Vector2(1, 0), 3));
             }
         }
 
@@ -193,8 +193,11 @@ public class Eight_Controller : MonoBehaviour
         GameObject CL_Cool = Instantiate(CoolObject, new Vector2(Random.Range(-5f,0f), Random.Range(-2f,2f)), Quaternion.identity);
         CoolController cool = CL_Cool.GetComponent<CoolController>();
 
+        
+
         if (Getpoint >= 103)
         {
+            gameSystem.AddCoolText(0);
             cool.sprite.sprite = Cool[0]; cool.animator.Play("パーフェクト評価"); audiomanager.isPlaySE(Coolaudio[6]);
             animator.Play("表情変化エクセレント", 0, 0);
             CoolAnimator.Play("エクセレント", 0, 0);
@@ -202,9 +205,12 @@ public class Eight_Controller : MonoBehaviour
             CL_Cool.transform.position = new Vector2(-2.5f, 3);
             HosiPOINT = 10;
             ExcellentCount++;
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[0];
         }
         else if(Getpoint < 103 && Getpoint >= 100)
         {
+            gameSystem.AddCoolText(1);
             HosiPOINT = 9;
             cool.sprite.sprite = Cool[0]; cool.animator.Play("エクセレント評価"); audiomanager.isPlaySE(Coolaudio[0]);
             animator.Play("表情変化エクセレント", 0, 0);
@@ -213,37 +219,48 @@ public class Eight_Controller : MonoBehaviour
             CL_Cool.transform.position = new Vector2(-2.5f,3);
 
             ExcellentCount++;
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[1];
         } else if(Getpoint < 100 && Getpoint >=90)
             {
-
+            gameSystem.AddCoolText(2);
             HosiPOINT = 8;
             cool.sprite.sprite = Cool[1]; cool.animator.Play("グレート評価"); audiomanager.isPlaySE(Coolaudio[1]);
             animator.Play("表情変化グレート", 0, 0);
             CoolAnimator.Play("グレート", 0, 0);
             GreatCount++;
             CoolEffectSpawn(GreatEffectObj);
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[2];
         }
         else if (Getpoint < 90 && Getpoint >= 85)
         {
+            gameSystem.AddCoolText(3);
             HosiPOINT = 6;
             cool.sprite.sprite = Cool[2];cool.animator.Play("ナイス評価"); audiomanager.isPlaySE(Coolaudio[2]);
             animator.Play("表情変化ナイス", 0, 0);
             NiceCount++;
             CoolAnimator.Play("ナイス", 0, 0);
             CoolEffectSpawn(NiceEffectObj);
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[3];
         }
         else if (Getpoint < 85 && Getpoint >= 75)
         {
             HosiPOINT = 4;
             cool.animator.Play("ソーソー評価"); audiomanager.isPlaySE(Coolaudio[4]);
             animator.Play("表情変化ソーソー", 0, 0);
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[4];
         }
         else if (Getpoint < 75 && Getpoint > 50)
         {
+            HosiPOINT = 3;
             cool.sprite.sprite = Cool[3];cool.animator.Play("バット評価"); audiomanager.isPlaySE(Coolaudio[3]);
             animator.Play("表情変化バット", 0, 0);
             CoolAnimator.Play("バット", 0, 0);
 
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[5];
         }
         else if (Getpoint <= 50)
         {
@@ -251,6 +268,8 @@ public class Eight_Controller : MonoBehaviour
             cool.sprite.sprite = Cool[3]; cool.animator.Play("テリブル評価"); audiomanager.isPlaySE(Coolaudio[5]);
             animator.Play("表情変化テリブル", 0, 0);
             CoolAnimator.Play("テリブル", 0, 0);
+
+            resaltBoard.CoolTEXT_Image.sprite = resaltBoard.CoolImages[6];
 
         }
         for (int i = 0; i < resaltBoard.StarImages.Count; i++)
@@ -268,8 +287,27 @@ public class Eight_Controller : MonoBehaviour
         }
 
     }
+    public void Stopcoroutine(IEnumerator Vcoroutine)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+    }
+    public void StartMoveCoroutine(IEnumerator Vcoroutine)
+    {
+        // 前のコルーチンが動いていたら停止
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+
+        // 新しいコルーチンを開始
+        coroutine = StartCoroutine(Vcoroutine);
+    }
     private IEnumerator EightRightMove(Vector2 value, float Speed)
     {
+        
         animator.Play("移動", 0, 0);
         while (transform.position.x < value.x) // サイズが 1 になるまで減少
         {

@@ -30,7 +30,7 @@ public class SAVE_Gamedata : MonoBehaviour
     }
     
     // データをファイルに保存するメソッド
-    public void SaveData(float Score)
+    public void SaveData(float Score,string PlassString)
     {
         try
         {
@@ -40,7 +40,7 @@ public class SAVE_Gamedata : MonoBehaviour
             dateTime = DateTime.Now;
             string todayDateString = dateTime.ToString("yyyy-MM-dd");
 
-            filePath = Path.Combine(Application.persistentDataPath, "game_data.txt"+ todayDateString);
+            filePath = Path.Combine(Application.persistentDataPath, "game_data"+ todayDateString + PlassString +".txt");
             
             
             int newlineCount = 0;
@@ -150,7 +150,7 @@ public class SAVE_Gamedata : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            SaveData(100);
+            SaveData(100,"TEST");
         }
         if (Input.GetKeyDown(KeyCode.L))
         {

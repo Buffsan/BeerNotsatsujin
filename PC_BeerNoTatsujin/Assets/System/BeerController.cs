@@ -124,8 +124,8 @@ public class BeerController : MonoBehaviour
         SaveBeerV =udp.BeerV *10;
         SaveBubbleV =udp.BubbleV*10;
 
-        udp.BubbleV = 999;
-        udp.BeerV = 999;
+        //udp.BubbleV = 999;
+        //udp.BeerV = 999;
 
     }
 
@@ -205,7 +205,8 @@ public class BeerController : MonoBehaviour
             }
             
             score = (int)Beersscore + (int)lostTimeScore + (int)Bounus;
-            savedata.SaveData(score);
+            gamesystem.ScoreNow = score;
+            //savedata.SaveData(score);//\\\\\\\\\\\\\\\ÉÅÉÇÇ…ï€ë∂\\\\\\\\\\\\\\\\
 
             //ëçï]èàóù
             string finish_ReviwText = RevieTexts[7];
@@ -221,13 +222,14 @@ public class BeerController : MonoBehaviour
             {
                 finish_ReviwText = RevieTexts[2];
             }
-            if ((foamRatio + liquidRatio) < 0.1) 
-            {
-                finish_ReviwText = RevieTexts[3];
-            }
+            
             if (foamRatio > 0.9) 
             {
                 finish_ReviwText = RevieTexts[4];
+            }
+            if ((foamRatio + liquidRatio) < 0.1) 
+            {
+                finish_ReviwText = RevieTexts[3];
             }
             if (udp.OverTime > 2) 
             {
@@ -237,6 +239,7 @@ public class BeerController : MonoBehaviour
             {
                 finish_ReviwText = RevieTexts[5];
             }
+            //Debug.Log("1:"+ foamRatio + "2:" + liquidRatio);
             resaltBoard.BonusText.text = finish_bonusText;
             resaltBoard.ReviewTEXT.text = finish_ReviwText;
             //Debug.Log(finish_ReviwText);

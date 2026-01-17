@@ -7,6 +7,7 @@ public class BackController_Systems : MonoBehaviour
     [SerializeField] float SpawnTime = 0;
     [SerializeField] float SpawnCount = 0;
     [SerializeField] GameObject Clover;
+    [SerializeField] float BasePosX = 0;
 
     public List<GameObject> BackNpcs = new List<GameObject>();
 
@@ -24,7 +25,9 @@ public class BackController_Systems : MonoBehaviour
             int RandomNPCint = Random.Range(0, BackNpcs.Count);
 
             SpawnCount = 0;
-            Instantiate(BackNpcs[RandomNPCint]);
+            GameObject CL_NPC = Instantiate(BackNpcs[RandomNPCint]);
+            BackNPC_Controller backNPC = CL_NPC.GetComponent<BackNPC_Controller>();
+            backNPC.BasePosX = BasePosX;
         }
         else 
         { 

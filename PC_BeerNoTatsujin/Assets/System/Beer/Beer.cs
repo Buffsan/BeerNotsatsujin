@@ -8,6 +8,7 @@ public class Beer : MonoBehaviour
     AudioManager manager => AudioManager.instance;
     [SerializeField] AudioClip Clip;
 
+    public GameObject BeerGrass;
     public GameObject BeerObject;
     public GameObject BubbleObject;
     [SerializeField] GameObject BeerPoint;
@@ -18,6 +19,11 @@ public class Beer : MonoBehaviour
         
         BubbleObject.transform.position = BeerPoint.transform.position;
 
+    }
+
+    public void ChangePoint() 
+    {
+        BubbleObject.transform.position = BeerPoint.transform.position;
     }
 
     // Update is called once per frame

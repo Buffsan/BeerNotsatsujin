@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BackNPC_Controller : MonoBehaviour
 {
+
+    public float BasePosX = 0;
     public enum Look 
     { 
     
@@ -32,12 +34,12 @@ public class BackNPC_Controller : MonoBehaviour
         if (look == Look.Right) 
         {
 
-            transform.position = new Vector2(15, Ypos);
+            transform.position = new Vector2(BasePosX + 15, Ypos);
             transform.localScale = new Vector2 (4.5f,4.5f);
         
         }else if (look == Look.Left) 
         {
-            transform.position = new Vector2(-15, Ypos);
+            transform.position = new Vector2(BasePosX -15, Ypos);
             transform.localScale = new Vector2(-4.5f, 4.5f);
         }
     }
@@ -51,7 +53,7 @@ public class BackNPC_Controller : MonoBehaviour
         {
 
             transform.position = new Vector2(transform.position.x - MoveSpeed, Ypos);
-            if (transform.position.x < -15) 
+            if (transform.position.x < BasePosX - 15) 
             {
                 Destroy(gameObject);
             }
@@ -61,7 +63,7 @@ public class BackNPC_Controller : MonoBehaviour
         {
             transform.position = new Vector2(transform.position.x + MoveSpeed, Ypos);
             transform.localScale = new Vector2(-4.5f, 4.5f);
-            if (transform.position.x > 15)
+            if (transform.position.x > BasePosX+ 15)
             {
                 Destroy(gameObject);
             }

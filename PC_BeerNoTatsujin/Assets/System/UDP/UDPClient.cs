@@ -1,21 +1,54 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Net.NetworkInformation;
-using System.Linq;
+
 
 using System.Text;
 using UnityEngine;
-using System.Collections; // 必須
-using UnityEngine;       // Unity関連クラスを使うための必須ディレクティブ
-using UnityEditor.VersionControl;
+
 using System.Collections.Generic;
+using TMPro;
 
 public class UDPClient : MonoBehaviour
 {
     [SerializeField] PlayerUDP playerUDP;
     [SerializeField] AudioTest Atest;
+    [SerializeField] TutorialUIs tutorial;
 
+    [SerializeField] float DataRecivedTime = 0.1f;
+    float DataRecivedCount = 0;
+
+    public TMP_InputField inputField; // インスペクタにアタッチ
+    public string IP_inputField;
+    public GameObject InputBody;
+    public bool isInputAction = true;
+    public void OnInputEnd()
+    {
+        IP_inputField = inputField.text;
+
+        if (string.IsNullOrWhiteSpace(IP_inputField))
+        {
+            Debug.LogWarning("IPアドレスが入力されていません");
+            return;
+        }
+
+        if (IsValidIP(IP_inputField))
+        {
+            AutLocal_IP = IP_inputField;
+            Debug.Log("有効なIPアドレスです: " + IP_inputField);
+            SentStartMessage();
+        }
+        else
+        {
+            Debug.LogError("無効なIPアドレスです: " + IP_inputField);
+        }
+
+        
+    }
+    bool IsValidIP(string ip)
+    {
+        return IPAddress.TryParse(ip, out _);
+    }
     public List<LocalIPClass> localIPClasses = new List<LocalIPClass>();
     public int ChoiceIP = 0;
 
@@ -24,6 +57,8 @@ public class UDPClient : MonoBehaviour
 
     public int BeerNumberAdd =0;
     public int BubbleNumberAdd = 0;
+
+    public float RotateV = 0;
 
     public bool A = false;
 
@@ -68,6 +103,29 @@ public class UDPClient : MonoBehaviour
             SentStartMessage();
         }
 
+        DataRecivedCount += Time.deltaTime;
+        if (DataRecivedTime < DataRecivedCount) 
+        {
+            DataRecivedCount = 0;
+            SendJsonData("データよこせ", 0);
+            tutorial.ChangeUI();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P)) 
+        {
+            if (isInputAction)
+            {
+                isInputAction = false;
+                InputBody.SetActive(false);
+            }
+            else 
+            {
+                isInputAction = true;
+                InputBody.SetActive(true);
+            }
+            
+        }
+
         if (Input.GetMouseButtonDown(2)) // 右クリック検知
         {
             SendJsonData("磁石接触", 0);
@@ -76,7 +134,11 @@ public class UDPClient : MonoBehaviour
         {
             SendJsonData("磁石分離", 0);
         }
-
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            SendJsonData("データよこせ", 0);
+            tutorial.ChangeUI();
+        }
         /*
         if (Input.GetMouseButton(1)) // 右クリック検知
         {
@@ -126,7 +188,7 @@ public class UDPClient : MonoBehaviour
     {
 
         //Debug.Log("通信開始");
-    udpClient = new UdpClient();
+        udpClient = new UdpClient();
         SendMessage("Hello from PC Client!");
         udpClient.BeginReceive(OnDataReceived, null);
     }
@@ -174,7 +236,7 @@ public class UDPClient : MonoBehaviour
             byte[] data = udpClient.EndReceive(result, ref serverEndPoint);
             string message = Encoding.UTF8.GetString(data);
 
-            //Debug.Log("Received from host: " + message);
+            Debug.Log("Received from host: " + message);
 
             // JSON解析を試行
             try
@@ -199,18 +261,23 @@ public class UDPClient : MonoBehaviour
                 }
                 if (receivedData.variable == "BubbleV")
                 {
-                    //Debug.Log("Variable is Bubble! Value: " + receivedData.value);
+                    Debug.Log("Variable is Bubble! Value: " + receivedData.value);
                     BubbleV = receivedData.value;
                 }
                 if (receivedData.variable == "PutInBubbleV")
                 {
                     Debug.Log("泡が入れられた回数: " + receivedData.value);
                     BubbleNumberAdd = (int)receivedData.value;
-}
+                }
                 if (receivedData.variable == "PutInBeerV")
                 {
                     Debug.Log("ビールが入れられた回数: " + receivedData.value);
                     BeerNumberAdd = (int)receivedData.value;
+                }
+                if (receivedData.variable == "RotateV") 
+                {
+                    Debug.Log("スマホの回転z: " + receivedData.value);
+                    RotateV = receivedData.value;
                 }
                 if (receivedData.variable == "開始")
                 {
