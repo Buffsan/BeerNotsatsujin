@@ -195,13 +195,7 @@ public class UDPClient : MonoBehaviour
 
     public void SendMessage(string message)
     {
-        /*serverIP = Dns.GetHostEntry(Dns.GetHostName())
-                 .AddressList
-                 .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?
-                 .ToString();*/
-
-        //serverIP = AutLocal_IP;
-
+       
         byte[] data = Encoding.UTF8.GetBytes(message);
         udpClient.Send(data, data.Length, AutLocal_IP, serverPort);
         //Debug.Log("Sent: " + message);
@@ -235,61 +229,35 @@ public class UDPClient : MonoBehaviour
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, serverPort);
             byte[] data = udpClient.EndReceive(result, ref serverEndPoint);
             string message = Encoding.UTF8.GetString(data);
-
             Debug.Log("Received from host: " + message);
-
             // JSON解析を試行
             try
             {
                 var receivedData = JsonUtility.FromJson<ReceivedData>(message);
-                // 変数が "Beer" の場合に処理を実行
-                
-                if (receivedData.variable == "BeerV")
+                //解析したJsonを変数として適応
+                switch (receivedData.variable)
                 {
-                    //Debug.Log("Variable is Beer! Value: " + receivedData.value);
-                    BeerV = receivedData.value;
-                    // 必要な処理を追加
-                    /*
-                    if (receivedData.value == 1)
-                    {
-                        Debug.Log("Let's drink some beer!");
-                    }
-                    else
-                    {
-                        Debug.Log("No beer value matched.");
-                    }*/
-                }
-                if (receivedData.variable == "BubbleV")
-                {
-                    Debug.Log("Variable is Bubble! Value: " + receivedData.value);
-                    BubbleV = receivedData.value;
-                }
-                if (receivedData.variable == "PutInBubbleV")
-                {
-                    Debug.Log("泡が入れられた回数: " + receivedData.value);
-                    BubbleNumberAdd = (int)receivedData.value;
-                }
-                if (receivedData.variable == "PutInBeerV")
-                {
-                    Debug.Log("ビールが入れられた回数: " + receivedData.value);
-                    BeerNumberAdd = (int)receivedData.value;
-                }
-                if (receivedData.variable == "RotateV") 
-                {
-                    Debug.Log("スマホの回転z: " + receivedData.value);
-                    RotateV = receivedData.value;
-                }
-                if (receivedData.variable == "開始")
-                {
-                    gameSystem.GameStart();
-                    Debug.Log("ゲーム開始Android");
-                }
-                if (receivedData.variable == "OverBeers")
-                {
-
-
-                    OverTime = receivedData.value;
-                   
+                    case "BeerV":
+                        BeerV = receivedData.value;
+                        break;
+                    case "BubbleV":
+                        BubbleV = receivedData.value;
+                        break;
+                    case "PutInBubbleV":
+                        BubbleNumberAdd = (int)receivedData.value;
+                        break;
+                    case "PutInBeerV":
+                        BeerNumberAdd = (int)receivedData.value;
+                        break;
+                    case "RotateV":
+                        RotateV = receivedData.value;
+                        break;
+                    case "開始":
+                        gameSystem.GameStart();
+                        break;
+                    case "OverBeers":
+                        OverTime = receivedData.value;
+                        break;
                 }
             }
             catch

@@ -5,47 +5,29 @@ using System;
 public class SAVE_Gamedata : MonoBehaviour
 {
     [SerializeField] GameSystem gameSystem;
-     
     public DateTime dateTime;
-
-
     public float timeRemaining = 60.5f;
-
-    // データを保存するファイル名（実行環境に応じてパスを調整してください）
-    // Application.persistentDataPath は、OSごとに永続的なデータを保存するための推奨パスです。
     // Windows: C:\Users\ユーザー名\AppData\LocalLow\会社名\ゲーム名
     // macOS: ~/Library/Application Support/会社名/ゲーム名
     // Android: /storage/emulated/0/Android/data/com.会社名.ゲーム名/files
     // iOS: Application/data/Container/Documents
     private string filePath;
-
     void Start()
-    {
-        
+    {      
         // ファイルパスを初期化
-        // 例えば "game_data.txt" というファイル名で保存する場合
+        //"game_data.txt"で保存
         filePath = Path.Combine(Application.persistentDataPath, "game_data.txt");
         Debug.Log("Saving data to: " + filePath);
-        
     }
-    
     // データをファイルに保存するメソッド
     public void SaveData(float Score,string PlassString)
     {
         try
         {
-
-            
-
             dateTime = DateTime.Now;
             string todayDateString = dateTime.ToString("yyyy-MM-dd");
-
-            filePath = Path.Combine(Application.persistentDataPath, "game_data"+ todayDateString + PlassString +".txt");
-            
-            
+            filePath = Path.Combine(Application.persistentDataPath, "game_data"+ todayDateString + PlassString +".txt");      
             int newlineCount = 0;
-          
-
             if (File.Exists(filePath))
             { // ファイルが存在する場合のみ読み込む
                 string loadedData = File.ReadAllText(filePath);
@@ -56,27 +38,20 @@ public class SAVE_Gamedata : MonoBehaviour
                         newlineCount++;
                     }
                 }
-            }
-           
-
+            }   
             string FinishcurrentTimeString = dateTime.ToString("HH:mm:ss");
-
             // 保存するデータを作成
             string dataToSave = "";
-
-
             if (newlineCount == 0) 
             {
                 dataToSave = $"Day,StartTime,FinishGame,Score,PlayCount \n";
                 newlineCount = 1;
             }
             dataToSave += $"{todayDateString:F2},{gameSystem.StartcurrentTimeString},{FinishcurrentTimeString},{Score},{newlineCount}\n";
-
             // ファイルにデータを書き込む
-            // true を指定すると追記モード、false を指定すると上書きモードになります
+            // true を指定すると追記モード、false を指定すると上書きモード
             File.AppendAllText(filePath, dataToSave); // 追記モード
             // File.WriteAllText(filePath, dataToSave); // 上書きモード
-
             Debug.Log("Data saved successfully!");
         }
         catch (System.Exception e)
